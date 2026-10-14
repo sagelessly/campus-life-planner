@@ -1,0 +1,107 @@
+/* The tablet responsiveness */
+
+@media(max-width:950px){
+    .site-header{
+        width:180px;
+    }
+
+    main.container{
+        margin-left:180px;
+        padding:24px 20px
+    }
+    .site-footer{
+        margin-left: 180px;
+        padding-inline: 20px;
+    }
+
+    .split{
+        grid-template-columns: 1fr;
+    }
+
+    .stats{
+        gap: 10px;
+    }
+
+    .stat{
+        padding:15px;
+    }
+}
+
+/* The mobile responsiveness */
+
+@media(max-width:620px){
+    .site-header{
+        position: relative;
+        width: 100%;
+        padding: 13px 16px;
+        overflow: visible;
+    }
+
+    .header-row{
+        gap: 14px;
+    }
+
+    .brand h1{
+        margin-left: 0;
+        font-size: 17px;
+    }
+
+    .nav-list{
+        flex-direction: row;
+        flex-wrap:wrap;
+        gap: 5px;
+    }
+
+    .nav-list a{
+        padding: 8px 9px;
+        font-size: 11px;
+    }
+
+    main.container{
+        margin-left: 0;
+        padding: 22px 15px 32px;
+    }
+
+    .site-footer{
+        margin-left: 0;
+        padding: 16px 15px;
+    }
+
+    h2{
+        font-size: 21px;
+    }
+
+    .stats{
+        grid-template-columns: 1fr;
+    }
+
+    .stat{
+        min-height: auto;
+    }
+
+    .toolbar{
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .check{
+        padding-bottom: 0;
+    }
+    .settings-grid{
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .settings-grid .field + .field{
+        margin-top: 15px;
+    }
+
+    .trend{
+        grid-template-columns: repeat(4, minmax(0,1fr));
+        gap: 8px;
+    }
+
+    .trend li{
+        min-height:110px;
+    }
+}
