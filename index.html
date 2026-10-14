@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">    
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initital-scale=1">
+
+        <title> Campus Life Planer </title>
+        <meta name="description" content="Plan tasks and events.">
+    </head>
+
+    <body>
+        <a class="skip-link" href="#main">Skip to main content</a>
+        
+<!-- header -->
+        <header class="site-header">
+            <div class="container header-row">
+                <div class="brand">
+                    <h1>Campus Life Planner</h1>
+                </div>
+                <nav aria-label="Main">
+                    <ul class="nav-list">
+                        <li><a href="#dashboard" aria-current="page"></a>Dashboard</li>
+                        <li><a href="#activities"></a>Activities</li>
+                        <li> <a href="#add-edit"></a>Add/Edit</li>
+                        <li><a href="#settings"></a>Settings</li>
+                        <li><a href="#about"></a>About</li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+<!-- main -->
+
+        <main id="main" tabindex="-1" class="container">
+            <p id="save-status" class="status-line" aria-live="polite"></p>
+
+<!-- dashboard -->
+
+            <section id="dashboard" aria-labelledby="dash-h">
+                <h2 id="dash-h">Good morning</h2>
+                <p class="dashboard-subtitle">Stay focused</p>
+
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-label">Total activities</span>
+                        <span class="stat-value" id="stat-total">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Total time</span>
+                        <span class="stat-value" id="stat-total">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Total tag</span>
+                        <span class="stat-value" id="stat-total">Note yet</span>
+                    </div>
+                </div>
+
+                <div class="panel target-panet">
+                    <h3>Target Duration</h3>
+                    <progress id="target-progress" value="0" max="1" aria-label="Planned time compared to the target"></progress>
+                    <p id="target-status" aria-live="polite"></p>
+                    <p id="target-alert" class="alert" role="alert"></p>
+                    <p class="hint">Target compared to the total duration of all activities</p>
+                </div>
+
+                <div class="panel target">
+                    <h3>Last 7 days </h3>
+                    <ol id="trend" class="trend" aria-label="Planned time for each of the last 7 days"></ol>
+                </div>
+            </section>
+            
+            <div class="split">
+
+<!-- activities -->
+
+                <section id="activities" aria-labelledby="act-h">
+                    <h2 id="act-h">Activities</h2>
+
+                    <div class="toolbar">
+                        <div class="field grow">
+                            <label for="search">Search using regex</label>
+                            <input type="text" id="search" autocomplete="off" spellcheck="false"
+                                   placeholder="eg: ^study|exam" aria-describedby="regex error result-count">
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="sort">Sort by</label>
+                        <select id="sort">
+                            <option value="due-asc">Due date (earliest)</option>
+                            <option value="due-desc">Due date (latest)</option>
+                            <option value="title-asc">Title (A to Z)</option>
+                            <option value="title-desc">Title (Z to A)</option>
+                            <option value="dur-asc">Duration (shortest)</option>
+                            <option value="dur-desc">Duration (longest)</option>
+                        </select>
+                    </div>
+
+                    <label class="check">
+                        <input id="case-insensitive" type="checkbox" checked> Ignore case </label>
+                    <p id="regex-error" class="error" role="alert"></p>
+                    <p id="result-count" class="hint" role="status" aria-live="polite"></p>
+                    <div id="empty-state" class="empty" hidden>
+                        <p><strong>no activities yet.</strong> Add your first task or event</p>
+                        <button type="button" id="load-sample-inline" class="btn"> Load smaple data</button>
+                    </div>
+                    <p id="no-matches" class="empty" hidden>No activities match</p>
+                    <ul id="list" class="cards"></ul>
+                </section>
+
+<!-- Add and edit -->
+                
+                <section id="add" class="panel" aria-labelledby="form-heading">
+                    <h2 id="form-heading"> Add activity </h2>
+                        <form id="form-heading">
+                            <div class="field">
+                                <label for="f-type">Type</label>
+                                <select id="f-type" aria-describedby="err-type" aria-invalid="false">
+                                    <option value="task">Task</option>
+                                    <option value="event">Event</option>
+                                </select>
+                                <p class="error" id="err-type"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="f-title">Title</label>
+                                <input id="f-title" type="text" autocomplete="off" aria-describedby="err-title" aria-invalid="false">
+                                <p class="error" id="err-title"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="f-date">Due date</label>
+                                <input id="f-date" type="date" aria-describedby="err-date" aria-invalid="false">
+                                <p class="hint" id="hint-date">YYYY-MM-DD</p>
+                                <p class="error" id="err-date"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="f-duration">Duration</label>
+                                <input id="f-duration" type="text" inputmode="decimal" autocomplete="off" aria-describedby="err-duration" aria-invalid="false">
+                                <p class="error" id="err-duration"></p>
+                            </div>
+
+                            <div class="field">
+                                <label for="f-tag">Tag</label>
+                                <input type="text" id="f-tag" list="tag-options" autocomplete="off" aria-describedby="err-tag" aria-invalid="false">
+                                 
+                                <datalist id="tag-options">
+                                    <option value="Study"></option>
+                                    <option value="Assignment"></option>
+                                    <option value="Exam"></option>
+                                    <option value="Club"></option>
+                                    <option value="Personal"></option>
+                                </datalist>
+                                <p class="error" id="err-tag"></p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" id="save-btn" class="btn btn-primary">Add activity</button>
+                                <button type="button" id="cancel-edit" class="btn" hidden>Cancel</button>
+                            </div>
+                        </form>
+                </section>
+            </div>
+
+<!-- settings -->
+             
+            <section id="settings" aria-labelledby="set-h">
+                <h2 id="set-h">Settings</h2>
+
+                <div class="panel settings-grid">
+                    <div class="field">
+                        <label for="target">Duration target (<span id="target-label-unit">minutes</span>)</label>
+                        <input id="target" type="number" min="0" stepy="any" aria-describedby="target-error">
+                        <p class="error" id="target-error"></p>
+                    </div>
+                    <div class="field">
+                        <label for="unit">Show durations in</label>
+                        <select id="unit">
+                            <option value="min">Minutes</option>
+                            <option value="hr">Hours</option>
+                        </select>
+                        <p class="hint">60 minutes equals 1 hour</p>
+                    </div>
+                </div>
+
+                <div class="panel data-panel">
+                    <h3>Your data</h3>
+
+                    <div class="button-row">
+                        <button type="button" id="export-btn" class="btn">Export JSON</button>
+                        <input type="file" id="import-file" class="visually-hidden-file" accept="applications/json,.json">
+                        <label for="import-file" class="btn file-btn">Import the JSON file</label>
+                        <button type="button" id="load-sample" class="btn">Load the sample data</button>
+                        <button type="button" id="clear-all" class="btn btn-danger">Delete all</button>
+                    </div>
+                    <p id="import-error" class="error" role="alert"></p>
+                    <p id="import-ok" class="ok" role="status"></p>
+                </div>
+            </section>
+
+<!-- about -->
+
+            <section id="about" aria-labelledby="about-h">
+                <h2 id="about-h">About</h2>
+                <div class="panel">
+                    <p>Campus Life Planner helps students keep track of assignments, study sessions, club meetings
+                and exams,see how much time they have planned, and stay under a workload target.
+                    </p>
+                    <p>>Built with plain HTML, CSS and JavaScript.</p>
+                </div>
+            </section>
+        </main>
+
+<!-- footer -->
+    
+        <footer class="site-footer">
+            <div class="containter"><p>Campus Life Planner</p></div>
+        </footer>
+    </body>
+
+</html>
