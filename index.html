@@ -35,7 +35,7 @@
 <!-- main -->
 
         <main id="main" tabindex="-1" class="container">
-            <p id="save-status" class="status-line" aria-live="polite"></p>
+            <p id="save-status" class="status-line" role="status" aria-live="polite"></p>
 
 <!-- dashboard -->
 
@@ -133,8 +133,7 @@
 
                             <div class="field">
                                 <label for="f-date">Due date</label>
-                                <input id="f-date" type="date" aria-describedby="err-date" aria-invalid="false">
-                                <p class="hint" id="hint-date">YYYY-MM-DD</p>
+                                <input id="f-date" type="date" aria-describedby="hint-date err.date" aria-invalid="false">
                                 <p class="error" id="err-date"></p>
                             </div>
 
@@ -220,6 +219,8 @@
         <footer class="site-footer">
             <div class="containter"><p>Campus Life Planner</p></div>
         </footer>
+
+        <script type="module" src="scripts/main.js"></script>
     </body>
 
 </html>
