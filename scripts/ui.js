@@ -1,9 +1,11 @@
 import { validateRecord } from './validators.js';
 import * as state from './state.js'
 import { compileRegex, filterRecords, sortRecords, splitMatches } from './search.js';
+import { computeStats, targetStatus, localToday, formatMinutes } from './stats.js';
 
 const $ = (sel) => document.querySelector(sel);
 
+const settings = { targetMinutes: 1200, unit: 'min'};
 const view = {pattern: '', ci:true, sort: 'due-asc'};
 let editingId = null;
 
@@ -37,7 +39,7 @@ function card(r, re){
     el('p', { class: 'meta'},
       el('time', {datetime: r.dueDate, text: `Due ${r.dueDate}`}),
       ' . ',
-      `${r.duration} min`),  
+      formatMinutes(r.duration, settings.unit)),
     el('div', {class: 'actions'},
       el('button', { type: 'button', class: 'btn btn-small', 'data-action': 'edit', 'aria-label': `Edit ${r.title}`, text:'Edit'}),
       el('button', { type: 'button', class: 'btn btn-small btn-danger', 'data-action': 'delete', 'aria-label': `Delete ${r.title}`, text: 'Delete' })),
@@ -59,6 +61,58 @@ function renderList(){
   $('#result-count').textContent =
     all.length === 0 ? '' : `Showing ${shown.length} of ${all.length} activit${all.length === 1 ? 'y' : 'ies'}.`;
 }
+
+//dashboard
++function setLiveText(node, text) {
+  if (node.textContent !== text) node.textContent = text;
+  }
+  
+  function renderDashboard() {
+    const s = computeStats(state.getAll(), localToday());
+    $('#stat-total').textContent = String(s.total);
+    $('#stat-duration').textContent = formatMinutes(s.totalMinutes, settings.unit);
+    $('#stat-tag').textContent = s.topTag ? `${s.topTag} (${s.topTagCount})` : 'None yet';
+  
+    const max = Math.max(0, ...s.trend.map((d) => d.minutes));
+    const trend = $('#trend');
+    trend.replaceChildren(
+      ...s.trend.map((d) => {
+        const bar = el('div', { class: 'bar', 'aria-hidden': 'true' });
+        bar.style.height = d.minutes > 0 ? `${Math.max(4, (d.minutes / max) * 100)}%` : '0';
+        return el('li', {},
+          el('span', { class: 'trend-value', text: formatMinutes(d.minutes, settings.unit) }),
+          el('div', { class: 'bar-wrap' }, bar),
+          el('span', { class: 'trend-label', text: d.label }),
+          el('span', { class: 'visually-hidden', text: `${d.count} due` }));
+      }),
+    );
+
+    // The sum of durations of ALL saved activities vs the target.
+  const t = targetStatus(s.totalMinutes, settings.targetMinutes);
+  const polite = $('#target-status');
+  const alertBox = $('#target-alert');
+  const progress = $('#target-progress');
+  progress.max = settings.targetMinutes > 0 ? settings.targetMinutes : 1;
+  progress.value = Math.min(s.totalMinutes, progress.max);
+  progress.hidden = t.state === 'none';
+  const target = formatMinutes(settings.targetMinutes, settings.unit);
+  if (t.state === 'none') {
+    setLiveText(polite, 'No duration target set. Set one in Settings.');
+    setLiveText(alertBox, '');
+  } else if (t.state === 'under') {
+    setLiveText(polite, `Target ${target}. Remaining: ${formatMinutes(t.remaining, settings.unit)}.`);
+    setLiveText(alertBox, '');
+  } else {
+    setLiveText(polite, '');
+    setLiveText(alertBox, `Over target by ${formatMinutes(t.overage, settings.unit)} (target ${target}).`);
+  }
+}
+
+function renderAll(){
+  renderDashboard();
+  renderList();
+}
+  
 
 // form
 const FIELD_MAP = {
@@ -136,7 +190,8 @@ function onSubmit(e) {
 export function init() {
   state.init([]);
   state.subscribe((all) => {
-    renderList();
+    renderDashboard();
+    renderAll();
   });
   $('#activity-form').addEventListener('submit', onSubmit);
   $('#cancel-edit').addEventListener('click',() => { 
