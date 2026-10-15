@@ -1,5 +1,6 @@
 import { validateRecord } from './validators.js';
 import * as state from './state.js'
+import * as storage from './storage.js'
 import { compileRegex, filterRecords, sortRecords, splitMatches } from './search.js';
 import { computeStats, targetStatus, localToday, formatMinutes } from './stats.js';
 
@@ -8,6 +9,7 @@ const $ = (sel) => document.querySelector(sel);
 const settings = { targetMinutes: 1200, unit: 'min'};
 const view = {pattern: '', ci:true, sort: 'due-asc'};
 let editingId = null;
+let saveOk = true;
 
 // helpers
 
@@ -23,7 +25,8 @@ function el(tag,attrs = {}, ...kids){
 }
 
 function announce(message) {
-  $('#save-status').textContent = message;
+  const warn = saveOk ? '' : ' Warning: your changes could not be saved.';
+  $('#save-status').textContent = message + warn; 
 }
 
 // activities list
@@ -188,10 +191,14 @@ function onSubmit(e) {
 
 // startup
 export function init() {
-  state.init([]);
+  const { records, problem } = storage.loadRecords();
+  state.init(records);
+
   state.subscribe((all) => {
+    saveOk = storage.saveRecords(all);
     renderDashboard();
     renderAll();
+    if(problem) announce (problem);
   });
   $('#activity-form').addEventListener('submit', onSubmit);
   $('#cancel-edit').addEventListener('click',() => { 
