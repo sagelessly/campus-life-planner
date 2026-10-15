@@ -2,11 +2,11 @@ import { validateRecord } from './validators.js';
 import * as state from './state.js'
 import * as storage from './storage.js'
 import { compileRegex, filterRecords, sortRecords, splitMatches } from './search.js';
-import { computeStats, targetStatus, localToday, formatMinutes } from './stats.js';
+import { computeStats, targetStatus, localToday, formatMinutes, toUnit, fromUnit } from './stats.js';
 
 const $ = (sel) => document.querySelector(sel);
 
-const settings = { targetMinutes: 1200, unit: 'min'};
+let settings = storage.loadSettings();
 const view = {pattern: '', ci:true, sort: 'due-asc'};
 let editingId = null;
 let saveOk = true;
@@ -27,6 +27,10 @@ function el(tag,attrs = {}, ...kids){
 function announce(message) {
   const warn = saveOk ? '' : ' Warning: your changes could not be saved.';
   $('#save-status').textContent = message + warn; 
+}
+
+function round2(n){
+  return Math.rount(n * 100)/ 100;
 }
 
 // activities list
@@ -90,6 +94,14 @@ function renderList(){
       }),
     );
 
+// settings
+
+   function renderSettings(){
+    $('#unit').value = settings.unit;
+    $('#target-label-unit').textContent = settings.unit === 'hr' ? 'hours' : 'minutes';
+    $('#target').value = String(round2(toUnit(settings.targetMinutes, settings.unit)));
+   }
+
     // The sum of durations of ALL saved activities vs the target.
   const t = targetStatus(s.totalMinutes, settings.targetMinutes);
   const polite = $('#target-status');
@@ -114,6 +126,7 @@ function renderList(){
 function renderAll(){
   renderDashboard();
   renderList();
+  renderSettings();
 }
   
 
@@ -188,6 +201,65 @@ function onSubmit(e) {
   resetForm();
   announce('Activity added.');
 }
+//settings action
+
+function download(filename, text) {
+  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const a = el('a', { href: url, download: filename });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  
+function showImportResult(ok, message) {
+  $('#import-ok').textContent = ok ? message : '';
+  $('#import-error').textContent = ok ? '' : message;
+  }
+  
+function applyImport(text) {
+  const result = storage.validateImportText(text);
+  if (!result.ok) {
+    showImportResult(false, `Import failed. ${result.errors.join(' ')} Your existing data was not changed.`);
+  return false;
+  }
+  state.replaceAll(result.records);
+  if (result.settings) {
+    settings = result.settings;
+    storage.saveSettings(settings);
+  }
+  renderAll();
+  const n = result.records.length;
+  showImportResult(true, `Imported ${n} activit${n === 1 ? 'y' : 'ies'}.`);
+  announce(`Imported ${n} activities.`);
+  return true;
+}
+
+async function onImportFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2_000_000) {
+    showImportResult(false, 'Import failed. The file is larger than 2 MB. Your existing data was not changed.');
+  } else {
+    try {
+    applyImport(await file.text());
+    } catch (err) {
+    showImportResult(false, 'Import failed. The file could not be read. Your existing data was not changed.');
+    }
+  }
+  e.target.value = ''; 
+}
+
+async function loadSample() {
+  if (state.getAll().length > 0 && !confirm('Replace your current activities with the sample data?')) return;
+  try {
+    const res = await fetch('seed.json');
+    if (!res.ok) throw new Error(String(res.status));
+    applyImport(await res.text());
+  } catch (err) {
+    showImportResult(false, 'Could not load seed.json. Open the app through a web server (not a file:// address).');
+  }
+}
 
 // startup
 export function init() {
@@ -234,4 +306,25 @@ export function init() {
     view.sort = e.target.value;
     renderList();
   });
+
+  $('#target').addEventListener('change', onTargetChange);
+  $('#unit').addEventListener('change', onUnitChange);
+  $('#export-btn').addEventListener('click', () => {
+    download(`campus-planner-${localToday()}.json`, JSON.stringify(storage.buildExport(state.getAll(), settings), null, 2));
+    announce('Exported your planner as a JSON file.');
+  });
+  $('#import-file').addEventListener('change', onImportFile);
+  $('#load-sample').addEventListener('click', loadSample);
+  $('#load-sample-inline').addEventListener('click', loadSample);
+  $('#clear-all').addEventListener('click', () => {
+    if (state.getAll().length === 0) return announce('There is nothing to clear.');
+    if (confirm('Delete ALL activities? This cannot be undone.')) {
+      state.replaceAll([]);
+      resetForm();
+      announce('All activities deleted.');
+    }
+  });
+
+renderAll();
+
 }

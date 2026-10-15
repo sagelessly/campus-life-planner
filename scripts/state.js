@@ -66,4 +66,9 @@ export function remove(id){
     records = records.filter((r) => r.id !== id);
     if (records.length !== before) emit ();
 }
+
+export function replaceAll(list){
+    records = list.slice();
+    emit();
+}
   
