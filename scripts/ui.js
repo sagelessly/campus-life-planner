@@ -5,6 +5,7 @@ import { compileRegex, filterRecords, sortRecords, splitMatches } from './search
 const $ = (sel) => document.querySelector(sel);
 
 const view = {pattern: '', ci:true, sort: 'due-asc'};
+let editingId = null;
 
 // helpers
 
@@ -37,6 +38,9 @@ function card(r, re){
       el('time', {datetime: r.dueDate, text: `Due ${r.dueDate}`}),
       ' . ',
       `${r.duration} min`),  
+    el('div', {class: 'actions'},
+      el('button', { type: 'button', class: 'btn btn-small', 'data-action': 'edit', 'aria-label': `Edit ${r.title}`, text:'Edit'}),
+      el('button', { type: 'button', class: 'btn btn-small btn-danger', 'data-action': 'delete', 'aria-label': `Delete ${r.title}`, text: 'Delete' })),
     );
 }
 function renderList(){
@@ -88,10 +92,31 @@ function showErrors(errors) {
 
 function resetForm() {
   $('#activity-form').reset();
+  editingId = null;
+  $('#form-heading').textContent = 'Add activity';
+  $('#save-btn').textContent = 'Add activity';
+  $('#cancel-edit').hidden = true;
   showErrors({});
-  $('#f-title').blur();
 }
 
+function startEdit(id){
+  const r = state.get(id);
+  if(!r) return;
+  editingId = id;
+  $('#f-type').value = r.type;
+  $('#f-title').value = r.title;
+  $('#f-date').value = r.dueDate;
+  $('#f-duration').value = String(r.duration);
+  $('#f-tag').value = r.tag;
+  $('#form-heading').textContent = 'Edit activity';
+  $('#save-btn').textContent = 'Update activity';
+  $('#cancel-edit').hidden = false;
+  showErrors({});
+  $('#add').scrollIntoView({behavior: 'smooth', block: 'start'});
+  $('#f-title').focus({ preventScroll: true});
+  announce(`Editing "${r.title}".`);
+}
+  
 function onSubmit(e) {
   e.preventDefault();
   const data = readForm();
@@ -114,6 +139,27 @@ export function init() {
     renderList();
   });
   $('#activity-form').addEventListener('submit', onSubmit);
+  $('#cancel-edit').addEventListener('click',() => { 
+    resetForm();
+    announce('Edit cancelled.');
+  });
+
+  $('#list').addEventListener('click', (e) => { 
+    const btn = e.target.closest('[data-action]');
+    if(!btn) return;
+    const id = btn.closest('[data-id]').dataset.id;
+    const r= state.get(id);
+    if(!ir) return;
+    if(btn.dataset.action === 'edit') startEdit(id);
+    else if(confirm(`Delete "${r.title}"?`)){
+      state.remove(id);
+      if(editingId === id) resetForm();
+      announce(`Deleted "${r.title}".`);
+      $('#Seach').focus();
+    }
+  });
+
+
   $('#search').addEventListener('input', (e) => {
       view.pattern = e.target.value;
       renderList();

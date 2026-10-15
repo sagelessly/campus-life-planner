@@ -44,4 +44,26 @@ export function add(fields){
     emit();
     return records;
 }
+
+export function update (id, fields){
+    const i = records.findIndex((r) => r.id ===id);
+    if(i=== -1) return null;
+    records[i] = {
+        ...records[i],
+        type: fields.type,
+        title: fields.title, 
+        dueDate: fields.dueDate,
+        duration: Number(fields.duration),
+        tag: fields.tag, 
+        updateAt: newDate().toISOString(),
+    };
+    emit();
+    return records[i];
+}
+
+export function remove(id){
+    const before = records.length;
+    records = records.filter((r) => r.id !== id);
+    if (records.length !== before) emit ();
+}
   
