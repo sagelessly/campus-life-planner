@@ -85,22 +85,22 @@
                             <input type="text" id="search" autocomplete="off" spellcheck="false"
                                    placeholder="eg: ^study|exam" aria-describedby="regex error result-count">
                         </div>
+
+                        <div class="field">
+                            <label for="sort">Sort by</label>
+                            <select id="sort">
+                                <option value="due-asc">Due date (earliest)</option>
+                                <option value="due-desc">Due date (latest)</option>
+                                <option value="title-asc">Title (A to Z)</option>
+                                <option value="title-desc">Title (Z to A)</option>
+                                <option value="dur-asc">Duration (shortest)</option>
+                                <option value="dur-desc">Duration (longest)</option>
+                            </select>
+                        </div>
+                        <label class="check"> <input id="case-insensitive" type="checkbox" checked> Ignore case </label>
                     </div>
 
-                    <div class="field">
-                        <label for="sort">Sort by</label>
-                        <select id="sort">
-                            <option value="due-asc">Due date (earliest)</option>
-                            <option value="due-desc">Due date (latest)</option>
-                            <option value="title-asc">Title (A to Z)</option>
-                            <option value="title-desc">Title (Z to A)</option>
-                            <option value="dur-asc">Duration (shortest)</option>
-                            <option value="dur-desc">Duration (longest)</option>
-                        </select>
-                    </div>
-
-                    <label class="check">
-                        <input id="case-insensitive" type="checkbox" checked> Ignore case </label>
+                   
                     <p id="regex-error" class="error" role="alert"></p>
                     <p id="result-count" class="hint" role="status" aria-live="polite"></p>
                     <div id="empty-state" class="empty" hidden>

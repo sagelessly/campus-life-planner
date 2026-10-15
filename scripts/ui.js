@@ -1,7 +1,10 @@
 import { validateRecord } from './validators.js';
 import * as state from './state.js'
+import { compileRegex, filterRecords, sortRecords, splitMatches } from './search.js';
 
 const $ = (sel) => document.querySelector(sel);
+
+const view = {pattern: '', ci:true, sort: 'due-asc'};
 
 // helpers
 
@@ -22,14 +25,14 @@ function announce(message) {
 
 // activities list
 
-function card(r){
+function card(r, re){
   return el(
     'li',
     {class: 'card', 'data-id': r.id},
     el('div', {class: 'card-top'},
       el('span',{class:`badge badge-${r.type}`, text:r.type}),
-      el('span',{class: 'tag',text: r.tag})),
-    el('h3',{ text: r.title}),
+      el('span',{class: 'tag'}, highlighted (r.tag, re))),
+    el('h3',{}, highlighted (r.title, re)),
     el('p', { class: 'meta'},
       el('time', {datetime: r.dueDate, text: `Due ${r.dueDate}`}),
       ' . ',
@@ -38,8 +41,19 @@ function card(r){
 }
 function renderList(){
   const all = state.getAll();
-  $('#list').replaceChildren(...all.map((r) => card (r)));
+  const { re, error } = compileRegex(view.pattern, view.ci);
+  const errBox = $ ('#regex-error');
+  errBox.textContent =error ? `Invalid pattern: ${error}. Showing all activities.` : '';
+  $('#search').setAttribute('aria-invalid', error ? 'true' : 'false');
+
+  const shown = sortRecords(filterRecords(all, re), view.sort);
+  const list = $('#list');
+  list.replaceChildren(...shown.map((r) => card(r, re)));
+
   $('#empty-state').hidden = all.length !== 0;
+  $('#no-matches').hidden = !(all.length > 0 && shown.length === 0);
+  $('#result-count').textContent =
+    all.length === 0 ? '' : `Showing ${shown.length} of ${all.length} activit${all.length === 1 ? 'y' : 'ies'}.`;
 }
 
 // form
@@ -100,6 +114,16 @@ export function init() {
     renderList();
   });
   $('#activity-form').addEventListener('submit', onSubmit);
-
-  renderList();
+  $('#search').addEventListener('input', (e) => {
+      view.pattern = e.target.value;
+      renderList();
+    });
+  $('#case-insensitive').addEventListener('change', (e) => {
+    view.ci = e.target.checked;
+    renderList();
+    });
+  $('#sort').addEventListener('change', (e) => {
+    view.sort = e.target.value;
+    renderList();
+  });
 }
