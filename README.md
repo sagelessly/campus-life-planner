@@ -128,6 +128,16 @@ The Campus Life Planner testing checklist contains 79 checks, covering applicati
 * Git and GitHub — Version control and repository hosting.
 * GitHub Pages — Application deployment.
 
+12. Submission links:
+
+Live Application:
+https://sagelessly.github.io/campus-life-planner/
+
+
+Demo Video:
+https://www.youtube.com/watch?v=L0iz5yXVZ8I
+
+
 
 
 
