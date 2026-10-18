@@ -1,0 +1,145 @@
+{
+    "app": "campus-life-planner",
+    "version": 1,
+    "settings": {
+      "targetMinutes": 1200,
+      "unit": "min"
+    },
+    "activities": [
+       {
+        "id": "rec_0001",
+        "type": "task",
+        "title": "Sumbit javascript assignment 3",
+        "dueDate": "2026-10-14",
+        "duration": 90,
+        "tag": "Assignment",
+        "createdAt": "2026-10-02T08:00:00:000Z",
+        "updateAt": "2026-10-02T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0002",
+        "type": "event",
+        "title": "Programming exam: data structures",
+        "dueDate": "2026-10-20",
+        "duration": 120,
+        "tag": "Exam",
+        "createdAt": "2026-10-03T08:00:00.000Z",
+        "updatedAt": "2026-10-03T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0003",
+        "type": "task",
+        "title": "Read <b>chapter</b> 5 & 6",
+        "dueDate": "2026-10-09",
+        "duration": 45,
+        "tag": "Study",
+        "createdAt": "2026-10-04T08:00:00.000Z",
+        "updatedAt": "2026-10-04T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0004",
+        "type": "event",
+        "title": "Robotics club meeting",
+        "dueDate": "2026-10-08",
+        "duration": 60,
+        "tag": "Club",
+        "createdAt": "2026-10-05T08:00:00.000Z",
+        "updatedAt": "2026-10-05T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0005",
+        "type": "task",
+        "title": "Résumé review for career fair",
+        "dueDate": "2026-10-06",
+        "duration": 30,
+        "tag": "Personal",
+        "createdAt": "2026-10-01T08:00:00.000Z",
+        "updatedAt": "2026-10-01T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0006",
+        "type": "task",
+        "title": "Quick flashcard review",
+        "dueDate": "2026-10-10",
+        "duration": 5,
+        "tag": "Study",
+        "createdAt": "2026-10-02T08:00:00.000Z",
+        "updatedAt": "2026-10-02T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0007",
+        "type": "event",
+        "title": "Group project workshop",
+        "dueDate": "2026-10-10",
+        "duration": 180,
+        "tag": "Study Group",
+        "createdAt": "2026-10-03T08:00:00.000Z",
+        "updatedAt": "2026-10-03T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0008",
+        "type": "task",
+        "title": "Leap day lab report",
+        "dueDate": "2028-02-29",
+        "duration": 240,
+        "tag": "Assignment",
+        "createdAt": "2026-10-04T08:00:00.000Z",
+        "updatedAt": "2026-10-04T08:00:00.000Z"  
+       },
+
+       {
+        "id": "rec_0009",
+        "type": "task",
+        "title": "Year-end reflection essay",
+        "dueDate": "2026-12-31",
+        "duration": 0,
+        "tag": "Personal",
+        "createdAt": "2026-10-05T08:00:00.000Z",
+        "updatedAt": "2026-10-05T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0010",
+        "type": "event",
+        "title": "Welcome back mixer",
+        "dueDate": "2026-01-01",
+        "duration": 90,
+        "tag": "Club",
+        "createdAt": "2026-10-01T08:00:00.000Z",
+        "updatedAt": "2026-10-01T08:00:00.000Z"
+       },
+
+       {
+        "id": "rec_0011",
+        "type": "task",
+        "title": "Final thesis literature review",
+        "dueDate": "2026-11-30",
+        "duration": 480,
+        "tag": "Study",
+        "createdAt": "2026-10-02T08:00:00.000Z",
+        "updatedAt": "2026-10-02T08:00:00.000Z"        
+       },
+
+       {
+        "id": "rec_0012",
+        "type": "task",
+        "title": "Pay library late fee",
+        "dueDate": "2026-10-04",
+        "duration": 15,
+        "tag": "Personal",
+        "createdAt": "2026-10-03T08:00:00.000Z",
+        "updatedAt": "2026-10-03T08:00:00.000Z"
+       }
+    ]
+}
+
+
+
+    
