@@ -42,14 +42,14 @@ export function splitMatches(text, re){
     let m;
     while((m=re.exec(str)) !== null){
         if (m[0] === ''){
-            re.lastIndexx++;
+            re.lastIndex++;
             continue
         }
-        if(m.index > last) segements.push({text: str.slice(last, m.index), match:false});
-        segements.push({text:m[0], match:true});
+        if(m.index > last) segments.push({text: str.slice(last, m.index), match:false});
+        segments.push({text:m[0], match:true});
         last = m.index + m[0].length;
     }
     re.lastIndex = 0;
-    if(last < str.length) segements.push({text: str.slice(last), match:false});
+    if(last < str.length) segments.push({text: str.slice(last), match:false});
     return segments.length ? segments : [{text: str, match:false}];
 }

@@ -2,13 +2,14 @@
 <html lang="en">    
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initital-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title> Campus Life Planer </title>
+        <title> Campus Life Planner </title>
         <meta name="description" content="Plan tasks and events.">
 
         <link rel="stylesheet" href="styles/main.css">
         <link rel="stylesheet" href="styles/responsive.css">
+        <link rel="icon" href="data:,">
     </head>
 
     <body>
@@ -22,11 +23,11 @@
                 </div>
                 <nav aria-label="Main">
                     <ul class="nav-list">
-                        <li><a href="#dashboard" aria-current="page"></a>Dashboard</li>
-                        <li><a href="#activities"></a>Activities</li>
-                        <li> <a href="#add-edit"></a>Add/Edit</li>
-                        <li><a href="#settings"></a>Settings</li>
-                        <li><a href="#about"></a>About</li>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#activities">Activities</a></li>
+                        <li><a href="#add">Add/Edit</a></li>
+                        <li><a href="#settings">Settings</a></li>
+                        <li><a href="#about">About</a></li>
                     </ul>
                 </nav>
             </div>
@@ -40,7 +41,7 @@
 <!-- dashboard -->
 
             <section id="dashboard" aria-labelledby="dash-h">
-                <h2 id="dash-h">Good morning</h2>
+                <h2 id="dash-h">Hello</h2>
                 <p class="dashboard-subtitle">Stay focused</p>
 
                 <div class="stats">
@@ -50,15 +51,15 @@
                     </div>
                     <div class="stat">
                         <span class="stat-label">Total time</span>
-                        <span class="stat-value" id="stat-total">0</span>
+                        <span class="stat-value" id="stat-duration">0</span>
                     </div>
                     <div class="stat">
-                        <span class="stat-label">Total tag</span>
-                        <span class="stat-value" id="stat-total">Note yet</span>
+                        <span class="stat-label">Top tag</span>
+                        <span class="stat-value" id="stat-tag">Not yet</span>
                     </div>
                 </div>
 
-                <div class="panel target-panet">
+                <div class="panel target-panel">
                     <h3>Target Duration</h3>
                     <progress id="target-progress" value="0" max="1" aria-label="Planned time compared to the target"></progress>
                     <p id="target-status" aria-live="polite"></p>
@@ -83,7 +84,7 @@
                         <div class="field grow">
                             <label for="search">Search using regex</label>
                             <input type="text" id="search" autocomplete="off" spellcheck="false"
-                                   placeholder="eg: ^study|exam" aria-describedby="regex error result-count">
+                                   placeholder="eg: ^study|exam" aria-describedby="regex-error result-count">
                         </div>
 
                         <div class="field">
@@ -99,27 +100,24 @@
                         </div>
                         <label class="check"> <input id="case-insensitive" type="checkbox" checked> Ignore case </label>
                     </div>
-
                    
                     <p id="regex-error" class="error" role="alert"></p>
                     <p id="result-count" class="hint" role="status" aria-live="polite"></p>
                     <div id="empty-state" class="empty" hidden>
-                        <p><strong>no activities yet.</strong> Add your first task or event</p>
-                        <button type="button" id="load-sample-inline" class="btn"> Load smaple data</button>
-                        <span>View all</span>
-                        <div class="panel">
-                            <ol id="trend" class="trend" aria-label="Upcoming activities"></ol>
-                        </div>
+                        <p><strong>No activities yet.</strong> Add your first task or event</p>
+                        <button type="button" id="load-sample-inline" class="btn"> Load sample data</button>
                     </div>
+
                     <p id="no-matches" class="empty" hidden>No activities match</p>
                     <ul id="list" class="cards"></ul>
                 </section>
 
 <!-- Add and edit -->
                 
-                <section id="add" class="panel" aria-labelledby="form-heading">
+                <section id="add" aria-labelledby="form-heading">
                     <h2 id="form-heading"> Add activity </h2>
-                        <form id="form-heading">
+                    <div class="panel">
+                        <form id="activity-form" novalidate>
                             <div class="field">
                                 <label for="f-type">Type</label>
                                 <select id="f-type" aria-describedby="err-type" aria-invalid="false">
@@ -137,7 +135,7 @@
 
                             <div class="field">
                                 <label for="f-date">Due date</label>
-                                <input id="f-date" type="date" aria-describedby="hint-date err.date" aria-invalid="false">
+                                <input id="f-date" type="date" aria-describedby="err-date" aria-invalid="false">
                                 <p class="error" id="err-date"></p>
                             </div>
 
@@ -166,6 +164,7 @@
                                 <button type="button" id="cancel-edit" class="btn" hidden>Cancel</button>
                             </div>
                         </form>
+                    </div>
                 </section>
             </div>
 
@@ -177,7 +176,7 @@
                 <div class="panel settings-grid">
                     <div class="field">
                         <label for="target">Duration target (<span id="target-label-unit">minutes</span>)</label>
-                        <input id="target" type="number" min="0" stepy="any" aria-describedby="target-error">
+                        <input id="target" type="number" min="0" step="any" aria-describedby="target-error">
                         <p class="error" id="target-error"></p>
                     </div>
                     <div class="field">
@@ -195,7 +194,7 @@
 
                     <div class="button-row">
                         <button type="button" id="export-btn" class="btn">Export JSON</button>
-                        <input type="file" id="import-file" class="visually-hidden-file" accept="applications/json,.json">
+                        <input type="file" id="import-file" class="visually-hidden-file" accept="application/json,.json">
                         <label for="import-file" class="btn file-btn">Import the JSON file</label>
                         <button type="button" id="load-sample" class="btn">Load the sample data</button>
                         <button type="button" id="clear-all" class="btn btn-danger">Delete all</button>
@@ -211,9 +210,9 @@
                 <h2 id="about-h">About</h2>
                 <div class="panel">
                     <p>Campus Life Planner helps students keep track of assignments, study sessions, club meetings
-                and exams,see how much time they have planned, and stay under a workload target.
+                and exams, see how much time they have planned, and stay under a workload target.
                     </p>
-                    <p>>Built with plain HTML, CSS and JavaScript.</p>
+                    <p>Built with plain HTML, CSS and JavaScript.</p>
                 </div>
             </section>
         </main>
@@ -221,7 +220,7 @@
 <!-- footer -->
     
         <footer class="site-footer">
-            <div class="containter"><p>Campus Life Planner</p></div>
+            <div class="container"><p>Campus Life Planner</p></div>
         </footer>
 
         <script type="module" src="scripts/main.js"></script>

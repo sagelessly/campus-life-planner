@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Campus Life Planner: Tests</title>
+  <link rel="icon" href="data:,">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 1rem auto; padding: 0 1rem; line-height: 1.5; }
+    li.pass::marker { content: "PASS  "; color: #166534; font-weight: 700; }
+    li.fail::marker { content: "FAIL  "; color: #b91c1c; font-weight: 700; }
+    ul { list-style-position: inside; padding: 0; }
+    #summary { font-size: 1.2rem; font-weight: 700; }
+    :focus-visible { outline: 3px solid #1d4ed8; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+    <h1>Tests</h1>
+     <p><a href="index.html">Back to the planner</a></p>
+     <p id="summary" role="status">Running...</p>
+     <ul id="results"></ul>
+     <script type="module">
+        import { runTests } from './tests.js';
+       const results = runTests();
+       const list = document.getElementById('results');
+       for (const r of results) {
+         const li = document.createElement('li');
+         li.className = r.pass ? 'pass' : 'fail';
+         li.textContent = r.name + (r.error ? ' (' + r.error + ')' : '');
+         list.append(li);
+       }
+       const passed = results.filter((r) => r.pass).length;
+       document.getElementById('summary').textContent = passed + ' of ' + results.length + ' tests passed.';
+     </script>
+   </body>
+   </html>
+
+
+
+

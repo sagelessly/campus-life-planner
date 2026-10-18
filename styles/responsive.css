@@ -14,10 +14,6 @@
         padding-inline: 20px;
     }
 
-    .split{
-        grid-template-columns: 1fr;
-    }
-
     .stats{
         gap: 10px;
     }
@@ -35,6 +31,8 @@
         width: 100%;
         padding: 13px 16px;
         overflow: visible;
+        border-right: 0;
+        border-bottom: 4px solid var(--gold);
     }
 
     .header-row{

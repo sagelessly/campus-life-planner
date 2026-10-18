@@ -2,6 +2,8 @@ import { validateRecord } from './validators.js';
 
 const KEY_DATA = 'clp.activities.v1';
 
+const KEY_SETTINGS = 'clp.settings.v1';
+
 export const DEFAULT_SETTINGS = Object.freeze({ targetMinutes: 1200, unit: 'min'});
 
 const isIso = (v) => typeof v === 'string' && !Number.isNaN(Date.parse(v));

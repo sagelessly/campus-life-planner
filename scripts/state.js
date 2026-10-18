@@ -6,7 +6,7 @@ function emit(){
     listeners.forEach((fn) => fn (snapshot));
 }
 
-export function init(inital){
+export function init(initial){
     records =initial.slice();
 }
 export function getAll(){
@@ -42,7 +42,7 @@ export function add(fields){
     };
     records.push(record);
     emit();
-    return records;
+    return record;
 }
 
 export function update (id, fields){
@@ -55,7 +55,7 @@ export function update (id, fields){
         dueDate: fields.dueDate,
         duration: Number(fields.duration),
         tag: fields.tag, 
-        updateAt: newDate().toISOString(),
+        updateAt: new Date().toISOString(),
     };
     emit();
     return records[i];

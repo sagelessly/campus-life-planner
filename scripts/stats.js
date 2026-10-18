@@ -3,7 +3,7 @@ const round2 = (n) => Math.round(n*100)/100;
 export function localToday(){
     const d = new Date();
     const pad = (n) => String(n).padStart(2,'0');
-    return `${d.getFullYear()} - ${pad(d.getMonth()+1)} - ${pad(d.getDate())}`;
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
 
 export function addDays(iso, n){

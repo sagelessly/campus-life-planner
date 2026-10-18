@@ -30,7 +30,7 @@ function announce(message) {
 }
 
 function round2(n){
-  return Math.rount(n * 100)/ 100;
+  return Math.round(n * 100)/ 100;
 }
 
 // activities list
@@ -52,6 +52,16 @@ function card(r, re){
       el('button', { type: 'button', class: 'btn btn-small btn-danger', 'data-action': 'delete', 'aria-label': `Delete ${r.title}`, text: 'Delete' })),
     );
 }
+
+function highlighted(text, re){
+  const frag = document.createDocumentFragment();
+  for (const seg of splitMatches(text, re)){
+    frag.append(seg.match ? el('mark', { text: seg.text }) : document.createTextNode(seg.text));
+  }
+  return frag;
+}
+
+
 function renderList(){
   const all = state.getAll();
   const { re, error } = compileRegex(view.pattern, view.ci);
@@ -70,7 +80,7 @@ function renderList(){
 }
 
 //dashboard
-+function setLiveText(node, text) {
+function setLiveText(node, text) {
   if (node.textContent !== text) node.textContent = text;
   }
   
@@ -94,15 +104,8 @@ function renderList(){
       }),
     );
 
-// settings
 
-   function renderSettings(){
-    $('#unit').value = settings.unit;
-    $('#target-label-unit').textContent = settings.unit === 'hr' ? 'hours' : 'minutes';
-    $('#target').value = String(round2(toUnit(settings.targetMinutes, settings.unit)));
-   }
-
-    // The sum of durations of ALL saved activities vs the target.
+// The sum of durations of ALL saved activities vs the target.
   const t = targetStatus(s.totalMinutes, settings.targetMinutes);
   const polite = $('#target-status');
   const alertBox = $('#target-alert');
@@ -121,6 +124,12 @@ function renderList(){
     setLiveText(polite, '');
     setLiveText(alertBox, `Over target by ${formatMinutes(t.overage, settings.unit)} (target ${target}).`);
   }
+}
+
+function renderSettings(){
+  $('#unit').value = settings.unit;
+  $('#target-label-unit').textContent = settings.unit === 'hr' ? 'hours' : 'minutes';
+  $('#target').value = String(round2(toUnit(settings.targetMinutes, settings.unit)));
 }
 
 function renderAll(){
@@ -167,6 +176,7 @@ function resetForm() {
   $('#save-btn').textContent = 'Add activity';
   $('#cancel-edit').hidden = true;
   showErrors({});
+  $('#f-title').blur();
 }
 
 function startEdit(id){
@@ -193,14 +203,17 @@ function onSubmit(e) {
   const errors = validateRecord(data);
   showErrors(errors);
   const n = Object.keys(errors).length;
-  if (n > 0) {
+  if(n > 0){
     announce(`Not saved. ${n} field${n > 1 ? 's need' : ' needs'} attention.`);
     return;
   }
-  state.add(data);
+  const wasEditing = editingId !== null;
+  if (wasEditing) state.update(editingId, data);
+  else state.add(data);
   resetForm();
-  announce('Activity added.');
+  announce(wasEditing ? 'Activity updated.' : 'Activity added.');
 }
+
 //settings action
 
 function download(filename, text) {
@@ -261,6 +274,31 @@ async function loadSample() {
   }
 }
 
+function onTargetChange(){
+  const value = Number($('#target').value);
+  const err = $('#target-error');
+
+  if ($('#target').value.trim() === '' || !Number.isFinite(value) || value < 0) {
+    err.textContent = 'Enter a number that is 0 or more.';
+    $('#target').setAttribute('aria-invalid', 'true');
+    return;
+  }
+  err.textContent = '';
+  $('#target').setAttribute('aria-invalid', 'false');
+  settings.targetMinutes = fromUnit(value, settings.unit);
+  storage.saveSettings(settings);
+  renderDashboard();
+  announce('Target saved.');
+}
+
+function onUnitChange(){
+  settings.unit = $('#unit').value;
+  storage.saveSettings(settings);
+  renderAll();
+  announce(`Showing durations in ${settings.unit === 'hr' ? 'hours' : 'minutes'}.`);
+}
+
+
 // startup
 export function init() {
   const { records, problem } = storage.loadRecords();
@@ -269,8 +307,7 @@ export function init() {
   state.subscribe((all) => {
     saveOk = storage.saveRecords(all);
     renderDashboard();
-    renderAll();
-    if(problem) announce (problem);
+    renderList();
   });
   $('#activity-form').addEventListener('submit', onSubmit);
   $('#cancel-edit').addEventListener('click',() => { 
@@ -283,13 +320,13 @@ export function init() {
     if(!btn) return;
     const id = btn.closest('[data-id]').dataset.id;
     const r= state.get(id);
-    if(!ir) return;
+    if(!r) return;
     if(btn.dataset.action === 'edit') startEdit(id);
     else if(confirm(`Delete "${r.title}"?`)){
       state.remove(id);
       if(editingId === id) resetForm();
       announce(`Deleted "${r.title}".`);
-      $('#Seach').focus();
+      $('#search').focus();
     }
   });
 
@@ -325,6 +362,6 @@ export function init() {
     }
   });
 
-renderAll();
-
+  renderAll();
+  if(problem) announce(problem);
 }
